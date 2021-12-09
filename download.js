@@ -6,7 +6,7 @@ module.exports = function download(url, out) {
         let file = fs.createWriteStream(out);
         https.get(url, (req) => {
             req.pipe(file);
-            req.on("end", () => resolve(out));
+            req.on("end", () => setTimeout(() => resolve(out), 250));
             req.on("error", (err) => reject(err));
         });
     });

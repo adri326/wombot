@@ -1,6 +1,9 @@
 const Rest = require("./rest.js");
 const identify = require("./identify.js");
 const download = require("./download.js");
+const mkdirp = require("mkdirp");
+
+mkdirp("./generated/");
 
 let paint_rest = new Rest("paint.api.wombo.ai");
 
@@ -48,6 +51,11 @@ module.exports = async function task(prompt, style, update_fn = () => {}) {
     while (!task.result) {
         task = await paint_rest.get(task_path, "GET");
         if (task.state === "pending") console.warn("Warning: task is pending");
+        update_fn({
+            state: "progress",
+            id,
+            task,
+        });
         await (new Promise((res) => setTimeout(res, 1000)));
     }
 
@@ -58,7 +66,7 @@ module.exports = async function task(prompt, style, update_fn = () => {}) {
         url: task.result.final
     });
 
-    let download_path = task.id + ".jpg";
+    let download_path = "./generated/" + task.id + ".jpg";
 
     await download(task.result.final, download_path);
 
