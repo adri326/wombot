@@ -109,7 +109,7 @@ const Rest = module.exports = class Rest {
                     data += chunk;
                 });
                 res.on("end", () => {
-                    if (res.statusCode !== 200) reject(data);
+                    if (res.statusCode !== 200) reject(new RestError(this.hostname, path, data));
                     else {
                         try {
                             resolve(JSON.parse(data));
@@ -119,12 +119,12 @@ const Rest = module.exports = class Rest {
                     }
                 });
                 res.on("error", (err) => {
-                    reject(err);
+                    reject(new RestError(this.hostname, path, err));
                 });
             });
 
             req.on("error", (err) => {
-                reject(err);
+                reject(new RestError(this.hostname, path, err));
             });
 
             req.write(post_data);
@@ -160,7 +160,7 @@ const Rest = module.exports = class Rest {
                     data += chunk;
                 });
                 res.on("end", () => {
-                    if (res.statusCode !== 200) reject(data);
+                    if (res.statusCode !== 200) reject(new RestError(this.hostname, path, data));
                     else {
                         try {
                             resolve(JSON.parse(data));
@@ -170,12 +170,12 @@ const Rest = module.exports = class Rest {
                     }
                 });
                 res.on("error", (err) => {
-                    reject(err);
+                    reject(new RestError(this.hostname, path, err));
                 });
             });
 
             req.on("error", (err) => {
-                reject(err);
+                reject(new RestError(this.hostname, path, err));
             });
 
             req.end();
@@ -236,4 +236,22 @@ module.exports.post = function(hostname, path, data) {
     let rest = new Rest(hostname);
 
     return rest.post(path, data);
+}
+
+const RestError = module.exports.RestError = class RestError extends Error {
+    constructor(hostname, path, ...args) {
+        super(...args);
+        this.hostname = hostname;
+        this.path = path;
+
+        if (Error.captureStackTrace) {
+           Error.captureStackTrace(this, RestError)
+        }
+
+        this.name = "RestError";
+    }
+
+    toFriendly() {
+        return `RestError(hostname = "${this.hostname}", path = "${this.path}"): "${this.message}"`;
+    }
 }
