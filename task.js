@@ -14,7 +14,6 @@ module.exports = async function task(prompt, style, update_fn = () => {}) {
         "Authorization": "bearer " + id,
         "Origin": "https://app.wombo.art",
         "Referer": "https://app.wombo.art/",
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:95.0) Gecko/20100101 Firefox/95.0",
     };
 
     update_fn({
