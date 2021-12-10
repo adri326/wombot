@@ -12,19 +12,32 @@ cd wombot
 npm install
 ```
 
-Then, copy the `secret-template.json` and rename it to `secret.json`, and fill out the required entries.
+Then, copy the `secret-template.json` and rename it to `secret.json`, and fill out the required entries for your usage:
 
-Finally, you can start the bot with:
+- for the CLI interface, you only need to input `identify_key`
+- for the bot, you need to provide all of the entries
+
+### CLI
+
+The CLI interface is able to submit one or multiple tasks and download the results for you.
+
+Following is an example querying the API with the prompt "Dark swords and light winds", with style "Dark Fantasy" (10):
+
+```sh
+node . "Dark swords and light winds" 10
+```
+
+You can find more options and the list of styles by running `node . --help`!
+
+### Bot
+
+Make sure that the CLI interface works (see above section) before running the bot.
+Also, please verify the code in this repository and don't blindly give it the token of a discord bot.
+
+To run the bot, run:
 
 ```sh
 node bot.js
-```
-
-Or, simply run it once with:
-
-```sh
-node . "Your prompt" STYLE_ID
-# Make sure to replace STYLE_ID with a number between 1 and 13
 ```
 
 ## Legal disclaimer
