@@ -49,3 +49,8 @@ I am not liable for whatever you do with it.
 so technically, you cannot post anything from them, evening if you got a paid subscription (unless they send you a letter with the rights) or if you're sharing the "trading card" preview (the one with the watermark).
 
 Because uploading the images to discord requires you to give discord the right to reproduce the image on their app, the discord bot shouldn't be used without Wombo's written approval.
+
+Whether copies made using the unofficial API are legal or not is debatable.
+This script only reproduces the sequence of requests made by the website and downloads data already downloaded by the website and shown to the user, albeit only temporarily.
+One could open the Developer Tools on the official website and download the same version there.
+That being said, I don't know the laws regarding browsers and copyright, and whether or not automated scripts count as legitimate use, so don't take my word on that.
