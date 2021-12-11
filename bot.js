@@ -5,7 +5,7 @@ const { Client, Intents, MessageAttachment } = require('discord.js');
 const path = require("path");
 const fs = require("fs");
 
-const task = require("./task.js");
+const task = require("./index.js");
 const styles = require("./styles.js");
 
 const secret = require("./secret.json");
