@@ -1,6 +1,6 @@
 {
   "name": "wombot",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Unofficial API for app.wombo.art",
   "main": "index.js",
   "scripts": {
@@ -20,10 +20,12 @@
   },
   "homepage": "https://github.com/adri326/wombot#readme",
   "dependencies": {
+    "mkdirp": "^1.0.4"
+  },
+  "devDependencies": {
     "@discordjs/rest": "^0.1.0-canary.0",
     "discord-api-types": "^0.25.2",
     "discord.js": "^13.3.1",
-    "mkdirp": "^1.0.4",
     "yargs": "^17.3.0"
   }
 }

@@ -24,10 +24,10 @@ The CLI interface is able to submit one or multiple tasks and download the resul
 Following is an example querying the API with the prompt "Dark swords and light winds", with style "Dark Fantasy" (10):
 
 ```sh
-node . "Dark swords and light winds" 10
+node cli.js "Dark swords and light winds" 10
 ```
 
-You can find more options and the list of styles by running `node . --help`!
+You can find more options and the list of styles by running `node cli.js --help`!
 
 ### Bot
 
@@ -39,6 +39,36 @@ To run the bot, run:
 ```sh
 node bot.js
 ```
+
+## Node.js module
+
+If you wish to use this API using a node.js module, then you should import this repository using `npm` or `yarn`:
+
+```sh
+npm install --save adri326/wombot
+```
+
+Then, in your code, import this library:
+
+```js
+const wombot = require("wombot");
+
+wombot("Your prompt", 10, (data) => {
+    // Callback for intermediary results, useful for debugging
+    console.log(data.status);
+}, {
+    final: true, // Download the final image
+    inter: false, // Download the intermediary results,
+    download_dir: "./generated/", // Where to download images
+    identify_key: "The key used by wombo.art to identify sessions", // Available (as of writing this) by looking at the requests made on the website
+}).then(data => {
+    console.log(data.path); // Path of the downloaded file
+}).catch(err => {
+    console.error(err);
+});
+```
+
+The `identify_key` token is meant to be kept private, so you shouldn't write it into your source code but rather into an outside file, ignored by your VCS.
 
 ## Legal disclaimer
 

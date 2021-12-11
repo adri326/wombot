@@ -1,127 +1,140 @@
-const task = require("./task.js");
-const styles = require("./styles.js");
-const yargs = require("yargs");
-const { hideBin } = require('yargs/helpers');
+const Rest = require("./rest.js");
+const identify = require("./identify.js");
+const download = require("./download.js");
+const mkdirp = require("mkdirp");
+const path = require("path");
 
-const argc = yargs(hideBin(process.argv))
-    .scriptName("wombot")
-    .usage(
-        "\"$0 <prompt> [style] [--times N]\"; where \"style\" can be a number between 1 and 12 (default 3):\n"
-        + [...styles].map(([id, name]) => id + " -> " + name).join("\n")
-    )
-    .positional("prompt", {
-        type: "string",
-        describe: "The prompt used by the AI to generate an image"
-    })
-    .positional("style", {
-        type: "number",
-        default: 3,
-        describe: "The style of the AI: chooses a collection of (presumed) GANs chained together, yielding different \"styles\""
-    })
-    .option("times", {
-        type: "number",
-        default: 1,
-        describe: "The number of times to request an image; setting this to a number higher than 10 will cause issues with the built-in ratelimiter!"
-    })
-    .option("quiet", {
-        type: "boolean",
-        default: false,
-        describe: "Silences most of the output, only printing the paths of the downloaded files.",
-    })
-    .option("inter", {
-        type: "boolean",
-        default: false,
-        describe: "When set, downloads the intermediary results as well."
-    })
-    .option("nofinal", {
-        type: "boolean",
-        default: false,
-        describe: "When set, disables the download of the final image. Instead, its url is printed."
-    })
-    .alias("h", "help")
-    .parse();
+let paint_rest = new Rest("paint.api.wombo.ai", 100);
 
-if (!styles.has(+argc._[1])) {
-    console.error("Invalid style: expected a number between 1 and 12!");
-    console.log("INFO: the available styles are:");
-    for (let [id, name] of styles) {
-        console.log(id + " -> " + name);
+module.exports = async function task(prompt, style, update_fn = () => {}, settings = {}) {
+    let {final = true, inter = false, identify_key, download_dir = "./generated/"} = settings;
+    if (final || inter) mkdirp(download_dir);
+
+    let id;
+    try {
+        id = await identify(identify_key);
+    } catch (err) {
+        console.error(err);
+        throw new Error(`Error while sending prompt:\n${err.toFriendly ? err.toFriendly() : err.toString()}`);
     }
-    return;
+
+    paint_rest.custom_headers = {
+        "Authorization": "bearer " + id,
+        "Origin": "https://app.wombo.art",
+        "Referer": "https://app.wombo.art/",
+    };
+
+    update_fn({
+        state: "authenticated",
+        id,
+    });
+
+    let task;
+    try {
+        task = await paint_rest.options("/api/tasks/", "POST")
+            .then(() => paint_rest.post("/api/tasks/", {premium: false}));
+    } catch (err) {
+        console.error(err);
+        throw new Error(`Error while allocating a new task:\n${err.toFriendly ? err.toFriendly() : err.toString()}`);
+    }
+
+    let task_path = "/api/tasks/" + task.id;
+
+    update_fn({
+        state: "allocated",
+        id,
+        task,
+    });
+
+    try {
+        task = await paint_rest.options(task_path, "PUT")
+            .then(() => paint_rest.put(task_path, {
+                input_spec: {
+                    display_freq: 10,
+                    prompt,
+                    style: +style,
+                }
+            }));
+    } catch (err) {
+        console.error(err);
+        throw new Error(`Error while sending prompt:\n${err.toFriendly ? err.toFriendly() : err.toString()}`);
+    }
+
+    update_fn({
+        state: "submitted",
+        id,
+        task,
+    });
+
+    let inter_downloads = [];
+    let inter_paths = [];
+    let inter_finished = [];
+
+    while (!task.result) {
+        try {
+            task = await paint_rest.get(task_path, "GET");
+        } catch (err) {
+            console.error(err);
+            throw new Error(`Error while fetching update:\n${err.toFriendly ? err.toFriendly() : err.toString()}`);
+        }
+        if (task.state === "pending") console.warn("Warning: task is pending");
+
+        if (inter) {
+            for (let n = 0; n < task.photo_url_list.length; n++) {
+                if (inter_downloads[n] || /\/final\.je?pg/i.exec(task.photo_url_list[n])) continue;
+                inter_paths[n] = path.join(download_dir, `${task.id}-${n}.jpg`);
+
+                inter_downloads[n] = download(task.photo_url_list[n], inter_paths[n]).then(() => {
+                    return inter_finished[n] = inter_paths[n];
+                });
+            }
+        }
+
+        update_fn({
+            state: "progress",
+            id,
+            task,
+            inter: inter_finished
+        });
+        await (new Promise((res) => setTimeout(res, 1000)));
+    }
+
+    update_fn({
+        state: "generated",
+        id,
+        task,
+        url: task.result.final,
+        inter: inter_finished,
+    });
+
+    let download_path = path.join(download_dir, `${task.id}-final.jpg`);
+
+    try {
+        if (final) await download(task.result.final, download_path);
+        if (inter) await Promise.all(inter_downloads);
+    } catch (err) {
+        console.error(err);
+        throw new Error(`Error while downloading results:\n${err.toFriendly ? err.toFriendly() : err.toString()}`);
+    }
+
+    update_fn({
+        state: "downloaded",
+        id,
+        task,
+        url: task.result.final,
+        path: final ? download_path : null,
+        inter: inter_finished,
+    });
+
+    return {
+        state: "downloaded",
+        id,
+        task,
+        url: task.result.final,
+        path: final ? download_path : null,
+        inter: inter_finished,
+    };
 }
 
-const quiet = argc.quiet;
-const inter = argc.inter;
-const final = !argc.nofinal;
-
-(async () => {
-    let prompt = argc._[0];
-    let style = +argc._[1] || 3;
-    if (!quiet) console.log("Prompt: `" + prompt + "`, Style: `" + styles.get(style) + "`");
-
-    if (argc.times > 1) { // --times > 1
-        let promises = [];
-        let states = [];
-
-        function handler(data, n) {
-            let current = data.task?.photo_url_list?.length ?? 0;
-            let max = styles.steps.get(style) + 1;
-            states[n] = data.state;
-
-            if (!quiet) console.log(n + ": " + data.state + " (" + current + "/" + max + ")");
-        }
-
-        for (let n = 0; n < +argc.times; n++) {
-            promises.push(task(prompt, style, (data) => handler(data, n), {final, inter}));
-
-            states.push("initializing");
-        }
-
-        let res = await Promise.all(promises);
-        if (!quiet && final) console.log("Your results have been downloaded to the following files:");
-        else if (!quiet) console.log("Task finished, the results are available at the following addresses:");
-
-        for (let r of res) {
-            for (let inter of r.inter) {
-                console.log(inter);
-            }
-            if (final) console.log(r.path);
-            else console.log(res.url);
-        }
-    } else { // --times == 1
-        function handler(data) {
-            switch (data.state) {
-                case "authenticated":
-                    if (!quiet) console.log("Authenticated, allocating a task...");
-                    break;
-                case "allocated":
-                    if (!quiet) console.log("Allocated, submitting the prompt and style...");
-                    break;
-                case "submitted":
-                    if (!quiet) console.log("Submitted! Waiting on results...");
-                    break;
-                case "progress":
-                    let current = data.task.photo_url_list.length;
-                    let max = styles.steps.get(style) + 1;
-                    if (!quiet) console.log("Submitted! Waiting on results... (" + current + "/" + max + ")");
-                    break;
-                case "generated":
-                    if (!quiet) console.log("Results are in, downloading the final image...");
-                    break;
-                case "downloaded":
-                    if (!quiet) console.log("Downloaded!");
-                    break;
-            }
-        }
-
-        let res = await task(prompt, style, handler, {final, inter});
-        if (!quiet && final) console.log("Your results have been downloaded to the following files:");
-        else if (!quiet) console.log("Task finished, the results are available at the following addresses:");
-
-        for (let inter of res.inter) {
-            console.log(inter);
-        }
-        if (final) console.log(res.path);
-        else console.log(res.url);
-    }
-})();
+module.exports.styles = require("./styles.js");
+module.exports.download = require("./download.js");
