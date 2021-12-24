@@ -11,6 +11,8 @@ styles.set(9, "Psychic");
 styles.set(10, "Dark Fantasy");
 styles.set(11, "Mystical");
 styles.set(12, "Festive");
+styles.set(13, "Baroque");
+styles.set(14, "Etching");
 
 // Does not include the "final" image!
 let steps = new Map();
@@ -26,6 +28,8 @@ steps.set(9, 21);
 steps.set(10, 20);
 steps.set(11, 20);
 steps.set(12, 32);
+steps.set(13, 20);
+steps.set(14, 20);
 
 module.exports = styles;
 module.exports.steps = steps;
