@@ -1,6 +1,6 @@
 # Wombot
 
-An unofficial API and bot for [wombo.art](https://app.wombo.art/).
+An unofficial API and discord bot for [wombo.art](https://app.wombo.art/).
 
 ## Installation
 
@@ -14,8 +14,9 @@ npm install
 
 Then, copy the `secret-template.json` and rename it to `secret.json`, and fill out the required entries for your usage:
 
-- for the CLI interface, you only need to input `identify_key`
-- for the bot, you need to provide all of the entries
+- For the CLI interface, you only need to input `identify_key`: this key can be found by going to `app.wombo.art`, then opening the F12 screen, going in the "Network" tab and reloading the page. The key appears at the end of every request to `googleapis.com`.
+For instance, one request looks like `https://securetoken.googleapis.com/v1/token?key=THE_IDENTIFY_KEY`.
+- For the discord bot, you need to provide all of the entries
 
 ### CLI
 
