@@ -13,6 +13,9 @@ styles.set(11, "Mystical");
 styles.set(12, "Festive");
 styles.set(13, "Baroque");
 styles.set(14, "Etching");
+styles.set(15, "S Dali");
+styles.set(16, "Wuhtercuhler");
+
 
 // Does not include the "final" image!
 let steps = new Map();
