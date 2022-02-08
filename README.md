@@ -1,6 +1,14 @@
 # Wombot
 
-An unofficial API and discord bot for [wombo.art](https://app.wombo.art/).
+An unofficial API and discord bot for [wombo.art](https://app.wombo.art/), aka Wombo Dream.
+It lets you queue and download the final and intermediary images of the AI, bypassing the limitations of the official webpage.
+
+## Projects using this library
+
+Here are links towards other (cool) projects that make use of this library:
+
+- [Datasets and Pretrained models for StyleGAN3](https://github.com/edstoica/lucid_stylegan3_datasets_models/blob/main/README.md), based on Wombo Dream. This project uses the output of Wombo Dream to train models and generate new images for a chosen theme.
+- [Wombot Collager](https://github.com/ElliotRoe/wombot), an extension of this library to generate collages of many of Wombo Dream's outputs.
 
 ## Installation
 
@@ -21,7 +29,7 @@ Then, copy the `secret-template.json` and rename it to `secret.json`, and fill o
 This key can be found by going to `app.wombo.art`, then opening the F12 screen, going in the "Network" tab and reloading the page.
 The key appears at the end of every request made to `googleapis.com`: for instance, one request looks like `https://securetoken.googleapis.com/v1/token?key=THE_IDENTIFY_KEY`.
 
-**For the discord bot**, you need to provide all of the entries
+**For the discord bot**, you need to provide all of the entries.
 
 ### CLI
 
