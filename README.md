@@ -1,3 +1,7 @@
+# edit to the original repo:
+- added "project_downloader.bat" for batch downloading multiple promts and styles.
+
+
 # Wombot
 
 An unofficial API and discord bot for [wombo.art](https://app.wombo.art/), aka Wombo Dream.
