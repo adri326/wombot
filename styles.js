@@ -17,6 +17,11 @@ styles.set(15, "S. Dali"); // Note: The website didn't put a space in it
 styles.set(16, "Wuhtercuhler");
 styles.set(17, "Provenance");
 styles.set(18, "Rose Gold");
+styles.set(19, "Moonwalker");
+styles.set(20, "Blacklight");
+styles.set(21, "Psychedelic");
+styles.set(22, "Ghibli");
+styles.set(23, "Surreal");
 
 // Counts the number of GANs in the chain, used for debugging
 // Does not include the "final" image!
@@ -39,6 +44,11 @@ steps.set(15, 20);
 steps.set(16, 20);
 steps.set(17, 19); // it seems like image 12 gets skipped
 steps.set(18, 19); // same deal here
+steps.set(19, 20);
+steps.set(20, 20);
+steps.set(21, 20);
+steps.set(22, 20);
+steps.set(23, 20);
 
 module.exports = styles;
 module.exports.steps = steps;

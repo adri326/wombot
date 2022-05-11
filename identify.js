@@ -5,12 +5,12 @@ const path = require("path");
 const SECRET_PATH = path.join(path.dirname(__filename), "secret.json");
 
 let identify_hostname = "identitytoolkit.googleapis.com";
-let identify_secret_key = null;
+let identify_secret_key = "AIzaSyDCvp5MTJLUdtBYEKYWXJrlLzu1zuKM6Xw";
 
 if (fs.existsSync(SECRET_PATH)) {
     let secret = JSON.parse(fs.readFileSync(SECRET_PATH, "utf8"));
 
-    identify_secret_key = secret.identify_key;
+    if (secret.identify_key) identify_secret_key = secret.identify_key;
     if (secret.identify_hostname) identify_hostname = secret.identify_hostname;
 }
 

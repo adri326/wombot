@@ -1,8 +1,8 @@
 {
   "name": "wombot",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Unofficial API for app.wombo.art",
-  "main": "index.js",
+  "main": "cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
