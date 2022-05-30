@@ -22,6 +22,9 @@ styles.set(20, "Blacklight");
 styles.set(21, "Psychedelic");
 styles.set(22, "Ghibli");
 styles.set(23, "Surreal");
+styles.set(24, "Love");
+styles.set(25, "Death");
+styles.set(26, "Robots");
 
 // Counts the number of GANs in the chain, used for debugging
 // Does not include the "final" image!
@@ -49,6 +52,9 @@ steps.set(20, 20);
 steps.set(21, 20);
 steps.set(22, 20);
 steps.set(23, 20);
+steps.set(24, 19);
+steps.set(25, 19);
+steps.set(26, 19);
 
 module.exports = styles;
 module.exports.steps = steps;
