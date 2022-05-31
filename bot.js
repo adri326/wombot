@@ -1,111 +1,114 @@
-const { REST } = require("@discordjs/rest");
-const { Routes } = require("discord-api-types/v9");
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { Client, Intents, MessageAttachment } = require('discord.js');
-const path = require("path");
+const Eris = require("eris");
 const fs = require("fs");
+const path = require("path");
 
 const task = require("./index.js");
 const styles = require("./styles.js");
 
 const secret = require("./secret.json");
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-const commands = [
-    new SlashCommandBuilder()
-        .setName("wombo-art")
-        .setDescription("Queries wombo.art!")
-        .addStringOption(option =>
-            option.setName("prompt")
-                .setDescription("Prompt to be used by the AI")
-                .setRequired(true)
-        )
-        .addStringOption(option => {
-            let res = option.setName("style")
-                .setDescription("The style to generate with")
-                .setRequired(true);
-            for (let [id, style] of styles) {
-                res = res.addChoice(style, `style-${id}`);
-            }
-            return res;
-        })
-];
-
-const rest = new REST({version: "9"}).setToken(secret.token);
-
-async function updateCommands() {
-    try {
-        await rest.put(
-            Routes.applicationCommands(secret.id),
-            {
-                body: commands
-            }
-        );
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-updateCommands();
-
-client.on("ready", () => {
-    console.log(`Logged in as ${client.user.tag}!`);
+const PREFIX = "wb!";
+const client = new Eris(secret.token, {
+    intents: [
+        "guilds",
+        "guildMessages",
+    ]
 });
 
-client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) return;
+const stylesParsed = new Map([...styles.entries()].map(([id, name]) => {
+    name = name.toLowerCase().replace(/\s+/g, "-");
+    name = name.replace(/[^a-z0-9\-]/g, "");
+    return [name, id];
+}));
 
-    if (interaction.commandName === "wombo-art") {
-        await interaction.deferReply();
+const HELP_MESSAGE = `Commands:
+\`wb!art <style> <prompt>\`
+- \`<prompt>\`: your prompt, must be shorter than 100 characters
+- \`<style>\`: the style to use, must be one of:\n${
+    ([...stylesParsed.entries()].map(([name, id]) => {
+        return `  - \`${name}\`: ${styles.get(id)}`;
+    })).join("\n")
+}`;
 
-        let style = interaction.options.getString("style");
-        let prompt = interaction.options.getString("prompt");
-        let match_style = /^style-([0-9]+)$/.exec(style);
-        if (!match_style || styles.get(+match_style[1]) === undefined) {
-            interaction.editReply({
-                content: "**Error:** invalid style!",
-                ephemeral: true
-            });
-            return;
+
+client.on("messageCreate", async (msg) => {
+    if (msg.content.startsWith(PREFIX + "help")) {
+        msg.channel.createMessage({
+            content: HELP_MESSAGE,
+            messageReference: {messageID: msg.id}
+        }).then(() => {}).catch(console.error);
+    } else if (msg.content.startsWith(PREFIX + "art")) {
+        // Extract arguments
+        let style = stylesParsed.get(msg.content.toLowerCase().split(" ")[1]);
+        let prompt = msg.content.split(" ").slice(2).join(" ").slice(0, 100);
+
+        if (prompt.startsWith("`") && prompt.endsWith("`")) {
+            prompt = prompt.slice(1, -1);
         }
-        match_style = +match_style[1];
 
-        let header = "Prompt: `" + prompt + "`, Style: `" + styles.get(match_style) + "`";
+        if (!style) {
+            return msg.channel.createMessage("**Error:** invalid style!");
+        }
+
+        let header = "Prompt: `" + prompt.replace(/`/g, "'") + "`, Style: `" + styles.get(style) + "`";
+        let reply = null;
 
         try {
-            let res = await task(prompt, match_style, (data) => {
+            reply = await msg.channel.createMessage(
+                {
+                    content: header,
+                    messageReference: {
+                        messageID: msg.id
+                    }
+                }
+            );
+
+            let res = await task(prompt, style, (data) => {
                 switch (data.state) {
                     case "authenticated":
-                        interaction.editReply(header + "\n*Authenticated, allocating a task...*");
+                        msg.channel.editMessage(reply.id, header + "\n*Authenticated, allocating a task...*");
                         break;
                     case "allocated":
-                        interaction.editReply(header + "\n*Allocated, submitting the prompt and style...*");
+                        msg.channel.editMessage(reply.id, header + "\n*Allocated, submitting the prompt and style...*");
                         break;
                     case "submitted":
-                        interaction.editReply(header + "\n*Submitted! Waiting on results...*");
+                        msg.channel.editMessage(reply.id, header + "\n*Submitted! Waiting on results...*");
                         break;
                     case "progress":
                         let current = data.task.photo_url_list.length;
-                        let max = styles.steps.get(match_style) + 1;
-                        interaction.editReply(header + "\n*Submitted! Waiting on results... (" + current + "/" + max + ")*");
+                        let max = styles.steps.get(style) + 1;
+                        msg.channel.editMessage(reply.id, header + "\n*Submitted! Waiting on results... (" + current + "/" + max + ")*");
                         break;
                     case "generated":
-                        interaction.editReply(header + "\n*Results are in, downloading the final image...*");
+                        msg.channel.editMessage(reply.id, header + "\n*Results are in, downloading the final image...*");
                         break;
                     case "downloaded":
-                        interaction.editReply(header + "\n*Downloaded! Uploading to discord...*");
+                        msg.channel.editMessage(reply.id, header + "\n*Downloaded! Uploading to discord...*");
                         break;
                 }
             });
-            const attachment = new MessageAttachment(fs.readFileSync(res.path), path.basename(res.path));
-            interaction.editReply(header);
-            interaction.followUp({
-                files: [attachment]
-            });
+
+            const attachment = fs.readFileSync(res.path);
+            msg.channel.editMessage(reply.id, header);
+            await msg.channel.createMessage({
+                content: "",
+                messageReference: {messageID: reply.id},
+            }, {file: attachment, name: path.basename(res.path)});
         } catch (err) {
-            interaction.editReply(header + "\n**Error!**```\n" + err.message + "\n```");
+            console.error(err);
+            if (reply) {
+                msg.channel.editMessage(reply.id, "**Error:** " + err.toString());
+            }
         }
     }
 });
 
-client.login(secret.token);
+client.on("ready", () => {
+    client.editStatus("online", {
+        name: "wb!help",
+        type: 0,
+    });
+    console.log(`Logged in as ${client.user.username}#${client.user.discriminator}!`);
+});
+
+client.connect();
