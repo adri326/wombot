@@ -2,7 +2,7 @@
   "name": "wombot",
   "version": "1.4.1",
   "description": "Unofficial API for app.wombo.art",
-  "main": "cli.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
