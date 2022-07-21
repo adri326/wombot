@@ -1,3 +1,4 @@
+#!/bin/node
 const task = require("./index.js");
 const styles = require("./styles.js");
 const yargs = require("yargs");

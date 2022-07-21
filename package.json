@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/adri326/wombot#readme",
   "dependencies": {
+    "jsdom": "^20.0.0",
     "mkdirp": "^1.0.4"
   },
   "devDependencies": {
