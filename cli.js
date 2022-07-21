@@ -75,6 +75,9 @@ async function generate(prompt, style, prefix) {
             case "progress":
                 let current = data.task.photo_url_list.length;
                 let max = styles.steps.get(style) + 1;
+                if (!max){
+                    max=20;
+                }
                 if (!quiet) console.log(`${prefix}Submitted! Waiting on results... (${current}/${max})`);
                 break;
             case "generated":

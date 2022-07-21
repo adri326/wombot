@@ -49,4 +49,6 @@ steps.set(24, 19);
 steps.set(25, 19);
 steps.set(26, 19);
 steps.set(27, 19);
-steps.set(28, 19);module.exports = styles;module.exports.steps = steps;
+steps.set(28, 19);
+module.exports = styles;
+module.exports.steps = steps;
