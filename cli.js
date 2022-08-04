@@ -1,14 +1,15 @@
 #!/bin/node
+
 const task = require("./index.js");
 const styles = require("./styles.js");
 const yargs = require("yargs");
 const { hideBin } = require("yargs/helpers");
-
+const {update}=require("./get_next_data.js")
 const argc = yargs(hideBin(process.argv))
     .scriptName("wombot")
     .usage(
         "\"$0 <prompt> [style] [--times N]\"; where \"style\" can be a number between 1 and 12 (default 3):\n"
-        + [...styles].map(([id, name]) => id + " -> " + name).join("\n")
+        + [...styles.default].map(([id, name]) => id + " -> " + name).join("\n")
     )
     .positional("prompt", {
         type: "string",
@@ -44,13 +45,18 @@ const argc = yargs(hideBin(process.argv))
         default: false,
         describe: "When set, disables the asyncronous generation. May avoid rate limiting.",
     })
+    .option("styleupdate",{
+        type:"boolean",
+        default:false,
+        describe: "Force updating styles.js"
+    })
     .alias("h", "help")
     .parse();
-
-if (!styles.has(+argc._[1])) {
-    console.error("Invalid style: expected a number between 1 and 12!");
+const numstyles=Math.max(...styles.default.keys())
+if (!styles.default.has(+argc._[1])) {
+    console.error(`Invalid style: expected a number between 1 and ${numstyles}!`);
     console.log("INFO: the available styles are:");
-    for (let [id, name] of styles) {
+    for (let [id, name] of styles.default) {
         console.log(id + " -> " + name);
     }
     return;
@@ -59,7 +65,7 @@ if (!styles.has(+argc._[1])) {
 const quiet = argc.quiet;
 const inter = argc.inter;
 const final = !argc.nofinal;
-
+const update_styles_js=argc.styleupdate;
 async function generate(prompt, style, prefix) {
     function handler(data, prefix) {
         switch (data.state) {
@@ -106,8 +112,11 @@ async function generate(prompt, style, prefix) {
     let prompt = argc._[0];
     let style = +argc._[1] || 3;
     if (!quiet)
-        console.log(`Prompt: \`${prompt}\`, Style: \`${styles.get(style)}\``);
-
+        console.log(`Prompt: \`${prompt}\`, Style: \`${styles.default.get(style)}\``);
+    if (!quiet&&update_styles_js){
+        console.log("Updating styles.js")
+    }
+    update(update_styles_js)
     for (let n = 0; n < +argc.times; n++) {
         const prefix = argc.times == 1 ? `` : `${n+1}: `;
         if (argc.noasync) await generate(prompt, style, prefix);
