@@ -136,7 +136,7 @@ module.exports = async function task(prompt, style, update_fn = () => {}, settin
     };
 }
 
-module.exports.styles = require("./styles.js");
+module.exports.styles = require("./styles.js").default;
 module.exports.download = require("./download.js");
 
 // Make `node .` a shorthand for `node cli.js`
