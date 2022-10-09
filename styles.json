@@ -48,10 +48,6 @@
 		"name": "Etching"
 	},
 	{
-		"id": 15,
-		"name": "S.Dali"
-	},
-	{
 		"id": 16,
 		"name": "Wuhtercuhler"
 	},
@@ -76,12 +72,16 @@
 		"name": "Ghibli"
 	},
 	{
-		"id": 27,
-		"name": "Radioactive"
-	},
-	{
 		"id": 28,
 		"name": "Melancholic"
+	},
+	{
+		"id": 29,
+		"name": "Transitory"
+	},
+	{
+		"id": 31,
+		"name": "Toasty"
 	},
 	{
 		"id": 32,
@@ -96,7 +96,95 @@
 		"name": "Throwback"
 	},
 	{
+		"id": 36,
+		"name": "Daydream"
+	},
+	{
+		"id": 37,
+		"name": "Surreal"
+	},
+	{
+		"id": 38,
+		"name": "Ink"
+	},
+	{
+		"id": 39,
+		"name": "Pandora"
+	},
+	{
 		"id": 40,
 		"name": "Malevolent"
+	},
+	{
+		"id": 41,
+		"name": "Street Art"
+	},
+	{
+		"id": 42,
+		"name": "Unrealistic"
+	},
+	{
+		"id": 44,
+		"name": "Meme"
+	},
+	{
+		"id": 45,
+		"name": "Comic"
+	},
+	{
+		"id": 46,
+		"name": "Anime"
+	},
+	{
+		"id": 47,
+		"name": "Line-Art"
+	},
+	{
+		"id": 48,
+		"name": "Gouache"
+	},
+	{
+		"id": 49,
+		"name": "Polygon"
+	},
+	{
+		"id": 50,
+		"name": "Paint"
+	},
+	{
+		"id": 51,
+		"name": "VFX"
+	},
+	{
+		"id": 52,
+		"name": "HDR"
+	},
+	{
+		"id": 53,
+		"name": "Analogue"
+	},
+	{
+		"id": 54,
+		"name": "Retro-Futurism"
+	},
+	{
+		"id": 55,
+		"name": "Isometric"
+	},
+	{
+		"id": 56,
+		"name": "Abstract Fluid"
+	},
+	{
+		"id": 57,
+		"name": "Bad Trip"
+	},
+	{
+		"id": 58,
+		"name": "Cartoonist"
+	},
+	{
+		"id": 59,
+		"name": "Pixel Art"
 	}
 ]

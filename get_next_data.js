@@ -3,7 +3,7 @@ const rest=require("./rest.js");
 const fs=require("fs");
 const path=require("path");
 
-const style_rest=new rest("app.wombo.art",100);
+const style_rest=new rest("www.wombo.art",100);
 
 function getNEXTdata(force=false){
     let header=parseInt(String(fs.readFileSync("styles.js")).split("\n")[0].slice(2))
