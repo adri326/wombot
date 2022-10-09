@@ -2,6 +2,8 @@
 
 const task = require("./index.js");
 const styles = require("./styles.js");
+const fs = require("fs");
+const path=require("path");
 const yargs = require("yargs");
 const { hideBin } = require("yargs/helpers");
 const {update}=require("./get_next_data.js")
@@ -50,6 +52,13 @@ const argc = yargs(hideBin(process.argv))
         default:false,
         describe: "Force updating styles.js"
     })
+    .option("inputImage",{
+        type:"string",
+        describe:"Path to an input image",
+        
+    }).option(        "dir",{
+    type:"string",describe:"Path to directory to output all of the images into"}
+    )
     .alias("h", "help")
     .parse();
 const numstyles=Math.max(...styles.default.keys())
@@ -66,7 +75,13 @@ const quiet = argc.quiet;
 const inter = argc.inter;
 const final = !argc.nofinal;
 const update_styles_js=argc.styleupdate;
-async function generate(prompt, style, prefix) {
+const download_dir="./generated/"+((argc.dir==undefined)?"":argc.dir)
+console.log(`out: ${download_dir}`);
+let image=false
+if (argc.inputImage){
+    image=fs.readFileSync(argc.inputImage).toString("base64")
+}
+async function generate(prompt, style, prefix, input_image = false) {
     function handler(data, prefix) {
         switch (data.state) {
             case "authenticated":
@@ -94,8 +109,14 @@ async function generate(prompt, style, prefix) {
                 break;
         }
     }
-
-    let res = await task(prompt, style, (data) => handler(data, prefix), {final, inter});
+	let res = await task(
+		prompt,
+		style,
+		data => handler(data, prefix),
+		{ final, inter ,download_dir},
+		input_image
+	);
+    // let res = await task(prompt, style, (data) => handler(data, prefix), {final, inter});
     if (!quiet && final)
         console.log(`${prefix}Your results have been downloaded to the following files:`);
     else if (!quiet)
@@ -119,7 +140,7 @@ async function generate(prompt, style, prefix) {
     update(update_styles_js)
     for (let n = 0; n < +argc.times; n++) {
         const prefix = argc.times == 1 ? `` : `${n+1}: `;
-        if (argc.noasync) await generate(prompt, style, prefix);
+        if (argc.noasync) await generate(prompt, style, prefix,image);
         else generate(prompt, style, prefix);
     }
 })();
