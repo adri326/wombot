@@ -13,8 +13,12 @@ function getNEXTdata(force=false){
         result=result.sort((a,b)=>{
             return a.id-b.id;
         })
+        result=result.filter((f)=>{
+            return !f.is_premium;        
+        });
+        console.log(result);
         fs.writeFileSync('styles.json',JSON.stringify(result,['id','name'],"\t"))
-        
+
     },
     (reason)=>{
         console.error('could not get next data')

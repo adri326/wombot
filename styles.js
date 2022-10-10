@@ -1,4 +1,4 @@
-//1665278392850
+//1665425497120
 let styles = new Map();
 styles.set(1,"Synthwave");
 styles.set(2,"Ukiyoe");
@@ -25,28 +25,20 @@ styles.set(32,"Realistic");
 styles.set(34,"Arcane");
 styles.set(35,"Throwback");
 styles.set(36,"Daydream");
-styles.set(37,"Surreal");
-styles.set(38,"Ink");
 styles.set(39,"Pandora");
 styles.set(40,"Malevolent");
-styles.set(41,"Street Art");
-styles.set(42,"Unrealistic");
 styles.set(44,"Meme");
 styles.set(45,"Comic");
-styles.set(46,"Anime");
 styles.set(47,"Line-Art");
 styles.set(48,"Gouache");
 styles.set(49,"Polygon");
 styles.set(50,"Paint");
-styles.set(51,"VFX");
 styles.set(52,"HDR");
 styles.set(53,"Analogue");
 styles.set(54,"Retro-Futurism");
 styles.set(55,"Isometric");
-styles.set(56,"Abstract Fluid");
 styles.set(57,"Bad Trip");
 styles.set(58,"Cartoonist");
-styles.set(59,"Pixel Art");
 let steps = new Map();
 steps.set(1, 23);
 steps.set(2, 21);
