@@ -1,0 +1,158 @@
+[
+	{
+		"id": 1,
+		"name": "Synthwave"
+	},
+	{
+		"id": 2,
+		"name": "Ukiyoe"
+	},
+	{
+		"id": 3,
+		"name": "No Style"
+	},
+	{
+		"id": 4,
+		"name": "Steampunk"
+	},
+	{
+		"id": 5,
+		"name": "Fantasy Art"
+	},
+	{
+		"id": 6,
+		"name": "Vibrant"
+	},
+	{
+		"id": 7,
+		"name": "HD"
+	},
+	{
+		"id": 9,
+		"name": "Psychic"
+	},
+	{
+		"id": 10,
+		"name": "Dark Fantasy"
+	},
+	{
+		"id": 11,
+		"name": "Mystical"
+	},
+	{
+		"id": 13,
+		"name": "Baroque"
+	},
+	{
+		"id": 14,
+		"name": "Etching"
+	},
+	{
+		"id": 16,
+		"name": "Wuhtercuhler"
+	},
+	{
+		"id": 17,
+		"name": "Provenance"
+	},
+	{
+		"id": 18,
+		"name": "Rose Gold"
+	},
+	{
+		"id": 20,
+		"name": "Blacklight"
+	},
+	{
+		"id": 21,
+		"name": "Psychedelic"
+	},
+	{
+		"id": 22,
+		"name": "Ghibli"
+	},
+	{
+		"id": 28,
+		"name": "Melancholic"
+	},
+	{
+		"id": 29,
+		"name": "Transitory"
+	},
+	{
+		"id": 31,
+		"name": "Toasty"
+	},
+	{
+		"id": 32,
+		"name": "Realistic"
+	},
+	{
+		"id": 34,
+		"name": "Arcane"
+	},
+	{
+		"id": 35,
+		"name": "Throwback"
+	},
+	{
+		"id": 36,
+		"name": "Daydream"
+	},
+	{
+		"id": 39,
+		"name": "Pandora"
+	},
+	{
+		"id": 40,
+		"name": "Malevolent"
+	},
+	{
+		"id": 44,
+		"name": "Meme"
+	},
+	{
+		"id": 45,
+		"name": "Comic"
+	},
+	{
+		"id": 47,
+		"name": "Line-Art"
+	},
+	{
+		"id": 48,
+		"name": "Gouache"
+	},
+	{
+		"id": 49,
+		"name": "Polygon"
+	},
+	{
+		"id": 50,
+		"name": "Paint"
+	},
+	{
+		"id": 52,
+		"name": "HDR"
+	},
+	{
+		"id": 53,
+		"name": "Analogue"
+	},
+	{
+		"id": 54,
+		"name": "Retro-Futurism"
+	},
+	{
+		"id": 55,
+		"name": "Isometric"
+	},
+	{
+		"id": 57,
+		"name": "Bad Trip"
+	},
+	{
+		"id": 58,
+		"name": "Cartoonist"
+	}
+]

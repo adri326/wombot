@@ -9,6 +9,7 @@ let identify_secret_key = "AIzaSyDCvp5MTJLUdtBYEKYWXJrlLzu1zuKM6Xw";
 
 if (fs.existsSync(SECRET_PATH)) {
     let secret = JSON.parse(fs.readFileSync(SECRET_PATH, "utf8"));
+	
 
     if (secret.identify_key) identify_secret_key = secret.identify_key;
     if (secret.identify_hostname) identify_hostname = secret.identify_hostname;
@@ -26,17 +27,25 @@ function identify(identify_key) {
             throw new Error("No identify key provided and no secret.json found!");
         }
     }
-
-    if (new Date().getTime() >= identify_timeout) {
+	let d;
+	if (fs.existsSync("./identityToolkit.json")){
+	d=JSON.parse(fs.readFileSync("./identityToolkit.json"))
+	}
+	else{
+		d={timeout:0}
+	}
+    if (d.timeout<new Date().getTime()){
         return new Promise(async (resolve, reject) => {
             let res = await identify_rest.post("/v1/accounts:signUp?key=" + identify_key, {
                 key: identify_key
             });
             identify_cache = res.idToken;
-            identify_timeout = new Date().getTime() + 1000 * +res.expiresIn - 30000;
-            resolve(identify_cache);
+            identify_timeout = new Date().getTime() + 1000 * +res.expiresIn;
+            fs.writeFileSync("./identityToolkit.json",JSON.stringify({"id":res.idToken,"timeout":identify_timeout}))
+		resolve(identify_cache);
         });
     } else {
+	identify_cache=d.id;
         return new Promise((resolve) => {
             resolve(identify_cache);
         });

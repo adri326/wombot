@@ -1,3 +1,5 @@
 secret.json
 node_modules
 *.jpg
+generated/*
+identityToolkit.json
